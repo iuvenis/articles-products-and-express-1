@@ -7,13 +7,14 @@ head
 body
   block content
     div(id= 'loginContainer')
-      div(id= 'formContainer')
-        form(method='POST' action='/login')
-          p Username:
-            input(name= 'username')
-          p  Password:
-            input(type= 'password' name= 'password')
-          button Login
-
-        a(href ='/signUp')
-          button Sign Up
+    div(id= 'formContainer')
+      form(method='POST' action='/login')
+        p Username:
+          input(name= 'username')
+        p(id='pw') Password:
+          input(type= 'password' name= 'password')
+        span
+          button(type= 'submit') Login
+        span
+          a(href ='/signUp')
+            button Sign Up

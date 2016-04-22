@@ -1,29 +1,30 @@
 doctype html
 
-block title
-  title
-    |Articles
+head
+  block title
+    title
+      |Articles
+body
+  block content
 
-block content
+    button
+      a(href= '/articles/new' style= 'text-decoration: none') Add New Article
 
-  button
-    a(href= '/articles/new' style= 'text-decoration: none') Add New Article
+    if(articles)
+      mixin createArticle(article)
+        h1= article.title
+        h2= article.body
+        h2= article.author
 
-  if(articles)
-    mixin createArticle(article)
-      h1= article.title
-      h2= article.body
-      h2= article.author
+      each article in articles
+        +createArticle(article)
+        button
+          a(href= '/articles/#{article.id}/edit' style= 'text-decoration: none') Edit
+        form(method="POST" action="/articles/#{article.id}?_method=DELETE")
+          button Delete This
 
-    each article in articles
-      +createArticle(article)
-      button
-        a(href= '/articles/#{article.id}/edit' style= 'text-decoration: none') Edit
-      form(method="POST" action="/articles/#{article.id}?_method=DELETE")
-        button Delete This
-
-  if(articles < 1)
-    p Add some articles!
-  else
-    form(method="GET" action="/articles/deleteAll")
-      button Reset All Articles
+    if(articles < 1)
+      p Add some articles!
+    else
+      form(method="GET" action="/articles/deleteAll")
+        button Reset All Articles
