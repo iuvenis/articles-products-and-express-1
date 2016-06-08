@@ -1,9 +1,10 @@
 'use strict';
+/*jshint multistr: true */
 const express = require('express'),
       router = express.Router(),
-      pass = require('../db/pass.js'),
+      pass = require('../pass/pass.js'),
       crypto = require('crypto'),
-      hash = crypto.createHash('sha512')
+      userModel = require('../models/userModel')
       ;
 
 router.route('/')
@@ -11,12 +12,27 @@ router.route('/')
     res.render('login');
   })
   .post((req, res) => {
-    if (req.body.username === 'Hello' && req.body.password === 'World') {
-      pass.access = true;
-      res.redirect('/');
-    } else {
-      res.redirect('/login');
+
+    function encrypt(password){
+      var hash = crypto.createHash('sha512');
+      return hash.update(password).digest('hex');
     }
+
+    let username = req.body.username;
+    let password = encrypt(req.body.password);
+
+    userModel.getUser(username, password)
+      .then(function(user){
+        if(user.length > 0){
+          pass.access = true;
+          res.redirect('/');
+        }
+      })
+      .catch(function(error){
+        res.send(error);
+      });
+
   });
+
 
 module.exports = router;

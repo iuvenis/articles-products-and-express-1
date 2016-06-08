@@ -1,5 +1,7 @@
 # articles-products-and-express
 
+npm install and create the postgres database 
+
 ## Goal
 Build a mock application which will have 2 resources: Products and Articles. Each resource will have an implementation of **CRUD** (create, read, update, delete). You should make use of Express' **Router** module to keep your code organized. Routes go in a directory called **routes**.
 
@@ -8,12 +10,6 @@ In addition, you will also have additional routes which will render **HTML** to 
 Each of your resources will have it's own module in charge of it's own data. This module should have helper methods for retreiving data. Keep these files in a directory named **db**.
 
 *note: we are not using a database, having a folder called db sort of sets up us for our next topic, databases.*
-
-[Here is a loose example of a module you'd build for `./db/articles.js`.](https://gist.github.com/sgnl/b17c4e8ac80349e23b9a)
-
-**Project Structure Example:**
-
-![image](https://cloud.githubusercontent.com/assets/3915598/12345781/987ddbc0-baf1-11e5-8837-cf4eb6e4400b.png)
 
 # Routes
 
@@ -118,15 +114,6 @@ Here are some middleware code for you to implement.
   - Scope: All incoming Requests
     - must **NOT** have this header.
       - if this header is present respond back with `{ "error": "sorry, we wanna track you" }`
-
-# Resources
-[Dev League's Express slide deck](http://slides.com/sgnl/express-yourself-deux#/)
-
-[Dev League's Middleware slide deck](http://slides.com/joecarlson/middleware/#/)
-
-[Dev league's Templating (JADE) slide deck](http://slides.com/sgnl/templating/#/)
-
-[Dev League's Module Pattern slide deck](http://slides.com/jasonsewell/object-literals-and-ze-module-pattern#/)
 
 
 [Expressjs.com](https://www.expressjs.com)

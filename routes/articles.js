@@ -1,44 +1,56 @@
 'use strict';
-const express = require('express'),
-      router = express.Router(),
-      validation = require('../middleware/validation'),
+const express       = require('express'),
+      router        = express.Router(),
+      validation    = require('../middleware/validation'),
       articlesModel = require('../models/articlesModel')
       ;
 
 router.route('/')
   .get ((req, res) => {
-    res.render('./articles/index', {
-      articles: articlesModel.getAll()
-    });
+    articlesModel.getAll()
+      .then(function(articles){
+        res.render('./articles/index', {
+          articles: articles
+        });
+      })
+      .catch(function(error){
+        res.send(error);
+      });
+
+
   })
   .post(validation({ "title": "string", "body": "string", "author": "string"}), (req,res) => {
     let newArticle = ({
       'title': req.body.title,
       'body': req.body.body,
-      'author': req.body.author,
-      'urlTitle': encodeURI(req.body.title)
+      'author': req.body.author
     });
 
-    articlesModel.addArticle(newArticle, (err) => {
-      if(err){
-        res.json({
-          success: false,
-          reason: err
-        });
-      }
-      else{
-        res.redirect('/articles');
-      }
-
+    articlesModel.addArticle(newArticle)
+    .then(function(){
+      res.redirect('/articles');
+    })
+    .catch(function(error){
+      res.json({
+        success: false,
+        reason: error
+      });
     });
   });
 
-router.route('/:title/edit')
+
+
+router.route('/:id/edit')
   .get( (req,res) => {
-    let title = req.params.title;
-    res.render('./articles/edit', {
-      article: articlesModel.getTitle(title)
+    let id = req.params.id;
+
+    articlesModel.getTitle(id)
+    .then(function(article){
+      res.render('./articles/edit', {
+        article: article[0]
+      });
     });
+
   });
 
 router.route('/new')
@@ -46,50 +58,46 @@ router.route('/new')
     res.render('./articles/new');
   });
 
-router.route('/:title')
+router.route('/:id')
   .put(validation({ "title": "string", "body": "string", "author": "string"}, true), (req, res) => {
-    let title = req.params.title;
+    let id = req.params.id;
     var changes = req.body;
 
-    articlesModel.changeArticle(title, changes, (err) => {
-      if(err){
-        return res.json({
-          success : false,
-          reason : err
-        });
-      }
-      else{
+    articlesModel.changeArticle(id, changes)
+      .then(function(){
         res.redirect('/articles');
-      }
-    });
+      })
+      .catch(function(error){
+        res.json({
+          success : false,
+          reason : error
+        });
+      });
   })
   .delete((req,res) => {
-    let title = req.params.title;
-
-    articlesModel.deleteArticle(title, (err) => {
-      if(err){
+    let id = req.params.id;
+    articlesModel.deleteArticle(id)
+      .then(function(){
+        res.redirect('/articles');
+      })
+      .catch(function(err){
         res.send({
           success : false,
           reason : err
         });
-      }
-      else{
-        res.redirect('/articles');
-      }
-    });
-
+      });
   });
 
 router.route('/deleteAll')
   .get( (req,res) => {
-    articlesModel.resetArticles((err) => {
-      if (err){
-        res.send('failed');
-      }
-      else{
-        res.redirect('/products');
-      }
+    articlesModel.resetArticles()
+    .then(function(){
+      res.redirect('/articles');
+    })
+    .catch(function(error){
+      res.send(error);
     });
-  });
+
+    });
 
 module.exports = router;
